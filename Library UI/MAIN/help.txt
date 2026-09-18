@@ -11,7 +11,7 @@ RAW LIBRARY
 Library UI/MAIN/RUNLUA_UI_Library.lua
 
 รูปแบบการโหลด:
-local Library = loadstring(game:HttpGet("YOUR_RAW_LIBRARY_URL"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/myks272626/RUNLUA-HUB/refs/heads/main/Library%20UI/MAIN/RUNLUA_UI_Library.lua"))()
 
 จากนั้นสร้าง Window:
 local Window = Library:CreateWindow({
