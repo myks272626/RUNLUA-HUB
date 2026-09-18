@@ -62,7 +62,7 @@ local Window = Library:CreateWindow({
     Name = "RUNLUA_UI",
     Title = "RUNLUA HUB",
     Subtitle = "Professional UI",
-    Logo = "",
+    Logo = "https://i.postimg.cc/cJKhRc1r/IMG-20260904-201616-447.png",
 
     Config = {
         WindowSize = Vector2.new(460, 330),
