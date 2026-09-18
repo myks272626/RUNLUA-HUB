@@ -1,8 +1,697 @@
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/myks272626/RUNLUA-HUB/refs/heads/main/Library%20UI/MAIN/RUNLUA_UI_Library.lua"))()
+RUNLUA UI LIBRARY — แอดมินแจกฟรีสำหรับทุกคนนะครับ เข้าใจง่ายๆเลย By RUNLUA HUB THAI
+=============================================
 
+เอกสารนี้มีไว้สำหรับ AI ที่ต้องเขียน/แก้ Script ให้เข้ากับ RUNLUA UI Library
+ให้ถือ API ในเอกสารนี้เป็น API หลักของ Library และห้ามสมมติ API ของ Library อื่น
+เช่น Rayfield, Fluent, Linoria, Kavo หรือ Vape
+
+RAW LIBRARY
+-----------
+ไฟล์ Library:
+Library UI/MAIN/RUNLUA_UI_Library.lua
+
+รูปแบบการโหลด:
+local Library = loadstring(game:HttpGet("YOUR_RAW_LIBRARY_URL"))()
+
+จากนั้นสร้าง Window:
 local Window = Library:CreateWindow({
     Title = "RUNLUA HUB",
     Subtitle = "UI Library",
+})
+
+สำคัญ:
+- Library คืนค่า table ชื่อ Library
+- Window คืนค่า Window object
+- Tab คืนค่า Tab object
+- Component ต่าง ๆ คืนค่า API object ตามที่ระบุด้านล่าง
+- โค้ดของ UI ต้องทำงานผ่าน API ของ Library นี้
+- อย่าสร้างระบบ UI ใหม่ทับ Library หากผู้ใช้ไม่ได้ขอ
+- อย่าเปลี่ยน Library เป็น UI framework อื่น
+- อย่าใช้ Emoji เป็น Icon หากมี Icon API ให้ใช้ Library.Icons
+
+============================================================
+1. โครงสร้างระบบ
+============================================================
+
+Library
+  └─ Window
+      ├─ Tabs
+      │   └─ Components
+      │       ├─ Section
+      │       ├─ Divider
+      │       ├─ Label
+      │       ├─ Button
+      │       ├─ Toggle
+      │       ├─ Slider
+      │       ├─ Dropdown
+      │       ├─ Textbox
+      │       ├─ Keybind
+      │       └─ PlayerList
+      └─ Notifications
+
+ความสัมพันธ์:
+Library:CreateWindow() -> Window
+Window:CreateTab() -> Tab
+Tab:Toggle()/Button()/... -> Component
+
+============================================================
+2. CREATE WINDOW
+============================================================
+
+local Window = Library:CreateWindow({
+    Name = "RUNLUA_UI",
+    Title = "RUNLUA HUB",
+    Subtitle = "Professional UI",
+    Logo = "",
+
+    Config = {
+        WindowSize = Vector2.new(460, 330),
+        WindowMinSize = Vector2.new(320, 240),
+
+        SidebarWidth = 118,
+        SidebarWidthCompact = 48,
+        CompactBreakpoint = 480,
+
+        HeaderHeight = 40,
+        RowHeight = 34,
+        RowHeightDesc = 46,
+        RowSpacing = 5,
+        Padding = 10,
+        CornerRadius = 9,
+
+        AnimFast = 0.15,
+        AnimNormal = 0.22,
+        AnimSlow = 0.35,
+
+        MaxNotifications = 4,
+        NotificationWidth = 240,
+        NotificationRight = 20,
+        NotificationTop = 20,
+    },
+
+    Theme = {
+        Background = Color3.fromRGB(10, 16, 32),
+        Surface = Color3.fromRGB(18, 28, 50),
+        SurfaceAlt = Color3.fromRGB(24, 36, 60),
+        SurfaceHover = Color3.fromRGB(30, 44, 74),
+
+        Accent = Color3.fromRGB(0, 132, 255),
+        AccentSoft = Color3.fromRGB(0, 90, 190),
+        AccentLight = Color3.fromRGB(90, 180, 255),
+
+        Text = Color3.fromRGB(232, 240, 255),
+        TextMuted = Color3.fromRGB(140, 160, 200),
+        Border = Color3.fromRGB(38, 60, 105),
+
+        Success = Color3.fromRGB(0, 180, 120),
+        Danger = Color3.fromRGB(220, 60, 80),
+        Warning = Color3.fromRGB(240, 180, 60),
+
+        SwitchOff = Color3.fromRGB(40, 52, 76),
+        Shadow = Color3.fromRGB(0, 0, 0),
+        White = Color3.fromRGB(255, 255, 255),
+    },
+})
+
+หมายเหตุ:
+- ค่า Config/Theme เป็น optional
+- ถ้าต้องการเปลี่ยนขนาด Window ให้ใช้ Config.WindowSize
+- ระบบมี responsive/mobile mode อยู่แล้ว
+- อย่าทำ UI Scale หรือ Mobile layout ใหม่ทับ Library โดยไม่จำเป็น
+
+============================================================
+3. TABS
+============================================================
+
+local Main = Window:CreateTab({
+    Name = "Main",
+    Icon = Library.Icons.Home,
+
+    OnSelected = function()
+        print("Main selected")
+    end,
+})
+
+local PlayersTab = Window:CreateTab({
+    Name = "Players",
+    Icon = Library.Icons.Player,
+})
+
+local Settings = Window:CreateTab({
+    Name = "Settings",
+    Icon = Library.Icons.Settings,
+})
+
+Alias:
+Window:Tab({...})
+
+ตัวอย่าง:
+local Tab = Window:Tab({
+    Name = "Extra",
+    Icon = Library.Icons.Action,
+})
+
+============================================================
+4. ICONS
+============================================================
+
+Built-in Icons:
+Library.Icons.Home
+Library.Icons.Player
+Library.Icons.ESP
+Library.Icons.Float
+Library.Icons.Teleport
+Library.Icons.Fling
+Library.Icons.Settings
+Library.Icons.Action
+Library.Icons.Check
+Library.Icons.Warning
+Library.Icons.Minimize
+Library.Icons.Close
+
+ตัวอย่าง:
+Main:Button({
+    Name = "Action",
+    Icon = Library.Icons.Action,
+})
+
+ห้ามใช้ Emoji แทน Icon หากสามารถใช้ Library.Icons ได้
+
+============================================================
+5. SECTION
+============================================================
+
+Main:Section({
+    Title = "General",
+})
+
+หรือ:
+Main:Section()
+
+ใช้สำหรับแบ่งหมวดหมู่ของ Component
+
+============================================================
+6. DIVIDER
+============================================================
+
+Main:Divider()
+
+หรือ:
+Main:Divider({
+    Order = 10,
+})
+
+============================================================
+7. LABEL
+============================================================
+
+Main:Label({
+    Name = "Status",
+})
+
+แบบมีคำอธิบาย:
+Main:Label({
+    Name = "Server Status",
+    Description = "Connected successfully",
+    Icon = Library.Icons.Check,
+    Color = Library.Theme.Success,
+})
+
+Label ไม่มี Callback
+
+============================================================
+8. BUTTON
+============================================================
+
+local Button = Main:Button({
+    Name = "Execute",
+    Description = "Run your action",
+    Icon = Library.Icons.Action,
+    Color = Library.Theme.Accent,
+
+    Callback = function()
+        print("Button clicked")
+    end,
+})
+
+เปลี่ยนข้อความ:
+Button:SetText("Execute Again")
+
+Button Callback ไม่มี argument
+
+============================================================
+9. TOGGLE
+============================================================
+
+local Toggle = Main:Toggle({
+    Name = "Enabled",
+    Description = "Example switch",
+    Icon = Library.Icons.Settings,
+
+    Default = false,
+
+    Callback = function(value)
+        print("Enabled:", value)
+    end,
+})
+
+อ่านค่า:
+local value = Toggle:Get()
+
+ตั้งค่า:
+Toggle:Set(true)
+
+ตั้งค่าและเรียก Callback:
+Toggle:Set(false, true)
+
+Alias:
+Toggle:SetValue(true, true)
+
+Callback:
+function(value)
+    -- value เป็น boolean
+end
+
+============================================================
+10. SLIDER
+============================================================
+
+local Slider = Main:Slider({
+    Name = "Speed",
+    Description = "Choose speed",
+    Min = 0,
+    Max = 100,
+    Default = 50,
+    Decimals = 0,
+
+    Callback = function(value)
+        print(value)
+    end,
+})
+
+อ่าน:
+Slider:Get()
+
+ตั้ง:
+Slider:Set(80)
+
+ตั้งและเรียก Callback:
+Slider:Set(80, true)
+
+Decimals:
+Main:Slider({
+    Name = "Multiplier",
+    Min = 0,
+    Max = 5,
+    Default = 1,
+    Decimals = 2,
+
+    Callback = function(value)
+        print(value)
+    end,
+})
+
+============================================================
+11. DROPDOWN
+============================================================
+
+local Dropdown = Main:Dropdown({
+    Name = "Mode",
+    Description = "Select a mode",
+
+    Values = {
+        "Option 1",
+        "Option 2",
+        "Option 3",
+    },
+
+    Default = "Option 1",
+
+    Callback = function(value)
+        print("Selected:", value)
+    end,
+})
+
+อ่าน:
+Dropdown:Get()
+
+เปลี่ยนค่า:
+Dropdown:Set("Option 2")
+
+เปลี่ยน + Callback:
+Dropdown:Set("Option 3", true)
+
+เปลี่ยนรายการ:
+Dropdown:Refresh({
+    "A",
+    "B",
+    "C",
+})
+
+ปิด:
+Dropdown:Close()
+
+รองรับชื่อ field:
+Values = {...}
+หรือ:
+Options = {...}
+
+============================================================
+12. TEXTBOX
+============================================================
+
+local Textbox = Main:Textbox({
+    Name = "Username",
+    Description = "Enter username",
+    Placeholder = "Type here...",
+    Default = "",
+    ClearOnFocus = false,
+
+    Callback = function(text, enterPressed)
+        print(text)
+        print(enterPressed)
+    end,
+})
+
+อ่าน:
+Textbox:Get()
+
+ตั้ง:
+Textbox:Set("Hello")
+
+ตั้ง + Callback:
+Textbox:Set("Hello", true)
+
+เข้าถึง TextBox ตัวจริง:
+Textbox.TextBox
+
+เช่น:
+Textbox.TextBox.Text = "Direct edit"
+
+Callback arguments:
+text = string
+enterPressed = boolean
+
+============================================================
+13. KEYBIND
+============================================================
+
+local Keybind = Main:Keybind({
+    Name = "Toggle UI",
+    Description = "Press a key",
+
+    Default = Enum.KeyCode.RightControl,
+
+    Callback = function(key)
+        print("Pressed:", key.Name)
+    end,
+
+    Changed = function(newKey)
+        print("Changed:", newKey.Name)
+    end,
+})
+
+อ่าน:
+Keybind:Get()
+
+เปลี่ยน:
+Keybind:Set(Enum.KeyCode.LeftControl)
+
+เมื่อกดปุ่ม Keybind ใน UI:
+- Library จะเข้า listening mode
+- ให้ผู้ใช้กด Keyboard key
+- Keybind จะเปลี่ยนเป็น key ใหม่
+- Changed callback จะถูกเรียก
+
+============================================================
+14. PLAYER LIST
+============================================================
+
+local PlayerList = PlayersTab:PlayerList({
+    Height = 170,
+
+    OnSelect = function(player)
+        print("Selected:", player.Name)
+    end,
+})
+
+อ่าน Player ที่เลือก:
+local player = PlayerList:Get()
+
+Refresh:
+PlayerList:Refresh()
+
+Clear:
+PlayerList:Clear()
+
+ระบบ PlayerList จะ refresh เมื่อ PlayerAdded / PlayerRemoving
+
+============================================================
+15. NOTIFICATION
+============================================================
+
+Window:Notify({
+    Title = "Success",
+    Message = "Action completed.",
+    Duration = 3,
+})
+
+Warning:
+Window:Notify({
+    Title = "Warning",
+    Message = "Something needs attention.",
+    Duration = 4,
+    Color = Library.Theme.Warning,
+    Icon = Library.Icons.Warning,
+})
+
+Success:
+Window:Notify({
+    Title = "Done",
+    Message = "Completed.",
+    Duration = 3,
+    Color = Library.Theme.Success,
+    Icon = Library.Icons.Check,
+})
+
+Error:
+Window:Notify({
+    Title = "Error",
+    Message = "Something went wrong.",
+    Duration = 4,
+    Color = Library.Theme.Danger,
+    Icon = Library.Icons.Warning,
+})
+
+Notification รองรับ Queue และจัดการจำนวน Notification ตาม Config.MaxNotifications
+
+============================================================
+16. WINDOW CONTROL
+============================================================
+
+แสดง:
+Window:Show()
+
+ซ่อน:
+Window:Hide()
+
+เปิด/ปิด:
+Window:Toggle()
+
+ลบ UI และ cleanup connections:
+Window:Destroy()
+
+เปลี่ยน Title:
+Window:SetTitle("New Title")
+
+เปลี่ยน Subtitle:
+Window:SetSubtitle("New Subtitle")
+
+เปลี่ยน Logo:
+Window:SetLogo("rbxassetid://123456789")
+
+============================================================
+17. OBJECTS ที่เข้าถึงได้
+============================================================
+
+Window.Gui
+Window.Main
+Window.Header
+Window.Sidebar
+Window.Content
+Window.Pages
+Window.Notifications
+Window.TitleLabel
+Window.SubtitleLabel
+Window.MinimizeButton
+Window.CloseButton
+Window.Scale
+
+Component ส่วนใหญ่มี:
+Component.Instance
+
+อย่าแก้ Instance โดยตรงหากสามารถใช้ API ของ Component ได้
+ให้ใช้ API ก่อน เช่น:
+Toggle:Set(...)
+Slider:Set(...)
+Dropdown:Set(...)
+Textbox:Set(...)
+
+============================================================
+18. ALIASES
+============================================================
+
+แทน:
+Tab:Toggle()
+ใช้:
+Tab:AddToggle()
+
+แทน:
+Tab:Button()
+ใช้:
+Tab:AddButton()
+
+แทน:
+Tab:Label()
+ใช้:
+Tab:AddLabel()
+
+แทน:
+Tab:Section()
+ใช้:
+Tab:AddSection()
+
+แทน:
+Tab:Divider()
+ใช้:
+Tab:AddDivider()
+
+แทน:
+Tab:Slider()
+ใช้:
+Tab:AddSlider()
+
+แทน:
+Tab:Dropdown()
+ใช้:
+Tab:AddDropdown()
+
+แทน:
+Tab:Textbox()
+ใช้:
+Tab:AddTextbox()
+
+แทน:
+Tab:Keybind()
+ใช้:
+Tab:AddKeybind()
+
+แทน:
+Tab:PlayerList()
+ใช้:
+Tab:AddPlayerList()
+
+============================================================
+19. COMPONENT API SUMMARY
+============================================================
+
+Button:
+    Main:Button({
+        Name = "...",
+        Description = "...",
+        Icon = Library.Icons.Action,
+        Color = Library.Theme.Accent,
+        Callback = function() end,
+    })
+
+    Button:SetText("...")
+
+Toggle:
+    Main:Toggle({
+        Name = "...",
+        Default = false,
+        Callback = function(value) end,
+    })
+
+    Toggle:Get()
+    Toggle:Set(boolean)
+    Toggle:Set(boolean, true)
+    Toggle:SetValue(boolean, true)
+
+Slider:
+    Main:Slider({
+        Name = "...",
+        Min = 0,
+        Max = 100,
+        Default = 50,
+        Decimals = 0,
+        Callback = function(value) end,
+    })
+
+    Slider:Get()
+    Slider:Set(number)
+    Slider:Set(number, true)
+
+Dropdown:
+    Main:Dropdown({
+        Name = "...",
+        Values = {"A", "B"},
+        Default = "A",
+        Callback = function(value) end,
+    })
+
+    Dropdown:Get()
+    Dropdown:Set(value)
+    Dropdown:Set(value, true)
+    Dropdown:Refresh(table)
+    Dropdown:Close()
+
+Textbox:
+    Main:Textbox({
+        Name = "...",
+        Placeholder = "...",
+        Default = "",
+        Callback = function(text, enterPressed) end,
+    })
+
+    Textbox:Get()
+    Textbox:Set(string)
+    Textbox:Set(string, true)
+    Textbox.TextBox
+
+Keybind:
+    Main:Keybind({
+        Name = "...",
+        Default = Enum.KeyCode.RightControl,
+        Callback = function(key) end,
+        Changed = function(key) end,
+    })
+
+    Keybind:Get()
+    Keybind:Set(Enum.KeyCode.X)
+
+PlayerList:
+    Main:PlayerList({
+        Height = 170,
+        OnSelect = function(player) end,
+    })
+
+    PlayerList:Get()
+    PlayerList:Refresh()
+    PlayerList:Clear()
+
+============================================================
+20. COMPLETE TEMPLATE FOR AI
+============================================================
+
+เมื่อผู้ใช้ขอให้ AI สร้าง Script ที่ใช้ RUNLUA UI Library
+ให้เริ่มด้วยรูปแบบนี้:
+
+local Library = loadstring(game:HttpGet("YOUR_RAW_LIBRARY_URL"))()
+
+local Window = Library:CreateWindow({
+    Title = "YOUR HUB",
+    Subtitle = "YOUR SUBTITLE",
 })
 
 local Main = Window:CreateTab({
@@ -15,20 +704,173 @@ Main:Section({
 })
 
 Main:Toggle({
-    Name = "Example Toggle",
-    Description = "ตัวอย่าง Toggle",
+    Name = "Example",
+    Description = "Example toggle",
+    Default = false,
+
     Callback = function(value)
-        print(value)
+        -- feature logic
     end,
 })
 
 Main:Button({
-    Name = "Test Notification",
+    Name = "Execute",
+    Icon = Library.Icons.Action,
+
+    Callback = function()
+        -- feature logic
+    end,
+})
+
+============================================================
+21. กฎสำหรับ AI ที่นำ Library ไปใช้
+============================================================
+
+1. ใช้ Library นี้โดยตรง:
+   Library -> Window -> Tab -> Component
+
+2. ห้ามเปลี่ยนไปใช้ UI Library อื่นโดยไม่ได้รับคำสั่ง
+
+3. ห้ามสมมติ Method ที่ไม่มีในเอกสารนี้
+
+4. Toggle Callback รับ boolean
+
+5. Slider Callback รับ number
+
+6. Dropdown Callback รับ selected value
+
+7. Textbox Callback รับ text และ enterPressed
+
+8. Keybind Callback รับ KeyCode
+
+9. PlayerList OnSelect รับ Player object
+
+10. Button Callback ไม่มี argument
+
+11. ใช้ Library.Icons สำหรับ Icon
+
+12. หากต้องการซ่อน/เปิด Window:
+       Window:Hide()
+       Window:Show()
+       Window:Toggle()
+
+13. หากต้องการลบ Window:
+       Window:Destroy()
+
+14. อย่าสร้าง ScreenGui/Sidebar/Toggle system ใหม่เพื่อแทนระบบของ Library
+    เว้นแต่ผู้ใช้สั่งให้แก้ Library โดยตรง
+
+15. UI ควรคำนึงถึงมือถือ เพราะ Library มี responsive mode และ Touch support
+
+16. เมื่อเขียนโค้ดให้ Library:
+    - ใช้ Colon syntax กับ Method:
+        Window:CreateTab(...)
+        Main:Toggle(...)
+    - อย่าเปลี่ยนเป็น:
+        Window.CreateTab(...)
+      เว้นแต่มีเหตุผลทาง Lua ที่จำเป็น
+
+17. อย่าใส่ Markdown fence ลงในไฟล์ RAW ของ Library
+
+============================================================
+22. ตัวอย่างโครงสร้าง HUB ที่แนะนำ
+============================================================
+
+local Library = loadstring(game:HttpGet("YOUR_RAW_LIBRARY_URL"))()
+
+local Window = Library:CreateWindow({
+    Title = "MY HUB",
+    Subtitle = "RUNLUA UI",
+})
+
+local Main = Window:CreateTab({
+    Name = "Main",
+    Icon = Library.Icons.Home,
+})
+
+local PlayerTab = Window:CreateTab({
+    Name = "Players",
+    Icon = Library.Icons.Player,
+})
+
+local Settings = Window:CreateTab({
+    Name = "Settings",
+    Icon = Library.Icons.Settings,
+})
+
+Main:Section({
+    Title = "Main Features",
+})
+
+Main:Toggle({
+    Name = "Feature",
+    Description = "Enable feature",
+    Default = false,
+
+    Callback = function(enabled)
+        -- feature code
+    end,
+})
+
+Main:Slider({
+    Name = "Value",
+    Min = 0,
+    Max = 100,
+    Default = 50,
+
+    Callback = function(value)
+        -- feature code
+    end,
+})
+
+Main:Dropdown({
+    Name = "Mode",
+    Values = {"Mode A", "Mode B", "Mode C"},
+    Default = "Mode A",
+
+    Callback = function(mode)
+        -- feature code
+    end,
+})
+
+Main:Button({
+    Name = "Execute",
     Callback = function()
         Window:Notify({
             Title = "Success",
-            Message = "UI ทำงานปกติ",
+            Message = "Executed.",
             Duration = 3,
+            Icon = Library.Icons.Check,
+            Color = Library.Theme.Success,
         })
     end,
 })
+
+PlayerTab:Section({
+    Title = "Players",
+})
+
+local SelectedPlayer = PlayerTab:PlayerList({
+    Height = 180,
+
+    OnSelect = function(player)
+        print("Target:", player.Name)
+    end,
+})
+
+Settings:Section({
+    Title = "Interface",
+})
+
+Settings:Keybind({
+    Name = "Toggle UI",
+    Default = Enum.KeyCode.RightControl,
+
+    Callback = function()
+        Window:Toggle()
+    end,
+})
+
+============================================================
+END OF RUNLUA UI LIBRARY AI GUIDE
+============================================================
